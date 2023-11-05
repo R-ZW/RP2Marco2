@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.WindowType;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -17,6 +16,7 @@ import org.openqa.selenium.edge.EdgeOptions;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class US1PrimeiroAcesso {
 
@@ -55,34 +55,58 @@ public class US1PrimeiroAcesso {
         navegador = new EdgeDriver(options);
     }
 
-    /*
-    * emanuelferreira.aluno@unipampa.edu.br
-    * senhaPraSerAlterada0
-    */
     @Test
     @DisplayName("Teste de caso automatizado 2 - Primeiro Acesso Bem-Sucedido")
     public void TCA02() {
         // Obtendo os dados do arquivo JSON
-        // String email = jsonObject.get("email").getAsString();
-        String email = "matheusciocca.aluno@unipampa.edu.br";
-        String senha = "fazAsDocumentacaoDoBernas2";
-        // String senha = jsonObject.get("senha").getAsString();
-        // String destinatario = jsonObject.get("destinatario").getAsString();
-        // String titulo = jsonObject.get("titulo").getAsString();
-        // String corpo = jsonObject.get("corpo").getAsString();
+        String emailIntegradora = "emanuelferreira.aluno@unipampa.edu.br";
+        String senhaIntegradora = "teste1234";
+        String emailGmail = "emanuelferreira.aluno@unipampa.edu.br";
+        String senhaGmail = "Tavinho2903";
+
 
         //Abre o SolarSys
         navegador.get("https://rp2unipampa.plataformasolarsys.com/login");
 
         //Preenche os campos de login e submete
-        for(int i=0; i<"usuario@email.com".length(); i++){
+        for (int i = 0; i < "usuario@email.com".length(); i++) {
             navegador.findElement(By.name("login")).sendKeys(Keys.BACK_SPACE);
         }
-        navegador.findElement(By.name("login")).sendKeys(email);
-        navegador.findElement(By.name("password")).sendKeys(senha);
+        navegador.findElement(By.name("login")).sendKeys(emailIntegradora);
+        navegador.findElement(By.name("password")).sendKeys(senhaIntegradora);
 
         navegador.findElement(By.className("v-btn__content")).click();
 
+        // Opens a new tab and switches to new tab
+        navegador.switchTo().newWindow(WindowType.TAB);
+        navegador.get("https://mail.google.com/mail/u/2/#inbox");
 
+        // Preenche o email e o submete
+        navegador.findElement(By.id("identifierId")).sendKeys(emailGmail, Keys.ENTER);
+
+        //espera 5 segundos até que o campo da senha apareça na tela
+        espera(10);
+
+        // Preenche a senha e a submete
+        navegador.findElement(By.name("Passwd")).sendKeys(senhaGmail, Keys.ENTER);
+
+        //espera 30 segundos até que a página do e-mail carregue e apareça na tela
+        espera(30);
+
+        // suposto id normal do e-mail enviado pela plataforma
+        navegador.findElement(By.cssSelector("tr#:1v")).click();
+
+        // vou ter que usar depois para clicar no resend
+        //navegador.findElement(By.className("d-inline")).click();
+
+        // alerta de e-mail enviado
+        // navegador.findElement(By.className("alert"))
+
+
+    }
+
+    // Método para fazer com que o navegador espere um tempo (em segundos) para que algo apareça na tela
+    private void espera(int tempo) throws RuntimeException {
+        navegador.manage().timeouts().implicitlyWait(tempo, TimeUnit.SECONDS);
     }
 }
