@@ -66,74 +66,73 @@ public class US1PrimeiroAcesso {
     @DisplayName("Teste de caso automatizado 2 - Primeiro Acesso Bem-Sucedido")
     public void TCA02() {
         // Obtendo os dados do arquivo JSON
-        String emailIntegradora = jsonObject.get("emailIntegradora").getAsString();
-        String senhaIntegradora = jsonObject.get("senhaIntegradora").getAsString();
-        String emailGmail = jsonObject.get("emailGmail").getAsString();
-        String senhaGmail = jsonObject.get("senhaGmail").getAsString();
+        String email = jsonObject.get("email").getAsString();
+        String senha = jsonObject.get("senha").getAsString();
+        String novaSenha = jsonObject.get("novaSenha").getAsString();
 
 
         //Abre o SolarSys
         navegador.get("https://rp2unipampa.plataformasolarsys.com/login");
 
         //Faz o login na Plataforma SolarSys
-        loginSolarSys(emailIntegradora, senhaIntegradora);
+        loginSolarSys(email, senha);
 
-        // clicar no resend para de fato enviar o e-mail
-        //navegador.findElement(By.className("d-inline")).click();
-        //espera.until(d -> navegador.findElement(By.cssSelector(".btn.btn-link.p-0.m-0.align-baseline")));
-        //navegador.findElement(By.cssSelector(".btn.btn-link.p-0.m-0.align-baseline")).click();
+        // espera o menu de usuário aparecer e clica nele
+        espera.until(d -> navegador.findElement(By.cssSelector(".v-badge > .v-avatar")));
+        navegador.findElement(By.cssSelector(".v-badge > .v-avatar")).click();
 
-        // Opens a new tab and switches to new tab
-        navegador.switchTo().newWindow(WindowType.TAB);
-        navegador.get("https://mail.google.com/mail/u/2/#inbox");
+        // espera a opção de "meus dados" aparecer e clica nela
+        espera.until(d -> navegador.findElement(By.id("list-item-158")));
+        navegador.findElement(By.id("list-item-158")).click();
 
-        loginEmail(emailGmail, senhaGmail);
-        //String a = navegador.getWindowHandle();
-        //navegador.switchTo().window(a);
+        // espera a opção de "alterar senha" aparecer e clica nela
+        espera.until(d -> navegador.findElement(By.cssSelector(".mr-15 > .v-btn__content")));
+        navegador.findElement(By.cssSelector(".mr-15 > .v-btn__content")).click();
 
-        //espera um máximo de 15 segundos até que a página do e-mail carregue e apareça na tela
-        espera(15);
+        alterarSenha(senha, novaSenha);
 
-        try {
-            // clica no e-mail enviado pela plataforma
-            navegador.findElement(By.id(":2d")).click();
-        } catch (NoSuchElementException e) {
-            // clica no resend para de fato enviar o e-mail
-            espera.until(d -> navegador.findElement(By.cssSelector(".btn.btn-link.p-0.m-0.align-baseline")));
-            navegador.findElement(By.cssSelector(".btn.btn-link.p-0.m-0.align-baseline")).click();
-        }
+        logout();
 
-        // clica no botão do e-mail enviado pela plataforma para validar o acesso
-        navegador.findElement(By.linkText("Verificar email")).click();
-
+        loginSolarSys(email, novaSenha);
     }
 
-    private static void loginEmail(String email, String senha) {
-        // Preenche o email e o submete
-        navegador.findElement(By.id("identifierId")).sendKeys(email, Keys.ENTER);
-
-        // Espera até que o campo da senha carregue na tela
-        espera.until(d -> navegador.findElement(By.name("Passwd")));
-
-        // Preenche a senha e a submete
-        navegador.findElement(By.name("Passwd")).sendKeys(senha, Keys.ENTER);
-    }
 
     private static void loginSolarSys(String email, String senha) {
-        // apaga o que tem no campo e preenche todos existentes
-        for (int i = 0; i < "usuario@email.com".length(); i++) {
+
+        espera.until(d -> navegador.findElement(By.name("login")));
+
+        //Preenche os campos de login e senha
+        for(int i = 0; i < "usuario@email.com".length(); i++){
             navegador.findElement(By.name("login")).sendKeys(Keys.BACK_SPACE);
         }
         navegador.findElement(By.name("login")).sendKeys(email);
         navegador.findElement(By.name("password")).sendKeys(senha);
 
-        // clica no botão de login
+        // Clica no botão de login
         navegador.findElement(By.className("v-btn__content")).click();
     }
 
-    // Método para fazer com que o navegador espere um tempo (em segundos) para que algo apareça na tela
-    private void espera(int tempo) {
-        navegador.manage().timeouts().implicitlyWait(tempo, TimeUnit.SECONDS);
+    private static void logout() {
+        espera.until(d -> navegador.findElement(By.className("v-badge__wrapper")));
+
+        //Abre o menu de usuário
+        navegador.findElement(By.cssSelector(".v-badge > .v-avatar")).click();
+
+        //Seleciona a opção de fazer logout
+        navegador.findElement(By.id("list-item-160")).click();
+    }
+
+    private static void alterarSenha(String senhaAntiga, String novaSenha) {
+
+        // espera os campos de senha aparecerem na tela
+        espera.until(d -> navegador.findElement(By.cssSelector(".mr-15 > .v-btn__content")));
+
+        // preenche os campos e submete
+        navegador.findElement(By.id("input-231")).sendKeys(senhaAntiga);
+        navegador.findElement(By.id("input-235")).sendKeys(novaSenha);
+        navegador.findElement(By.id("input-239")).sendKeys(novaSenha);
+
+        navegador.findElement(By.cssSelector(".rounded:nth-child(3)")).click();
     }
 
 }
