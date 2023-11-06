@@ -64,7 +64,7 @@ public class US1PrimeiroAcesso {
 
     @Test
     @DisplayName("Teste de caso automatizado 2 - Primeiro Acesso Bem-Sucedido")
-    public void TCA02() {
+    public void TCA03() {
         // Obtendo os dados do arquivo JSON
         String email = jsonObject.get("email").getAsString();
         String senha = jsonObject.get("senha").getAsString();
