@@ -16,6 +16,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class US16EnvioDeMensagem {
 
@@ -60,7 +61,7 @@ public class US16EnvioDeMensagem {
 
     @Test
     @DisplayName("Teste de caso automatizado 4 - Envio de Mensagem Bem-Sucedido")
-    public void TC04() {
+    public void TC04() throws InterruptedException {
         // Obtendo os dados do arquivo JSON
         String email = jsonObject.get("email").getAsString();
         String senha = jsonObject.get("senha").getAsString();
@@ -75,8 +76,8 @@ public class US16EnvioDeMensagem {
         espera.until(d -> navegador.findElement(By.cssSelector(".iconify--majesticons")));
         navegador.findElement(By.cssSelector(".iconify--majesticons")).click();
 
-        espera.until(d -> navegador.findElement(By.cssSelector(".v-btn__content > .iconify--fluent")));
-        navegador.findElement(By.cssSelector(".v-btn__content > .iconify--fluent")).click();
+        espera.until(d -> navegador.findElement(By.cssSelector(".pa-1:nth-child(5) > .v-list-item__content")));
+        navegador.findElement(By.cssSelector(".pa-1:nth-child(5) > .v-list-item__content")).click();
 
         mandarMensagem(mensagem);
 
@@ -97,9 +98,16 @@ public class US16EnvioDeMensagem {
         navegador.findElement(By.className("v-btn__content")).click();
     }
 
-    private static void mandarMensagem(String mensagem) {
+    private static void mandarMensagem(String mensagem) throws InterruptedException {
         // espera pela caixa de texto aparecer e digita a mensagem nela
+        espera.until(d -> navegador.findElement(By.id("input-198")));
+        navegador.findElement(By.id("input-198")).sendKeys(mensagem);
 
-        // clica no botão de enviar a mensagem
+        // tempo de espera para ver a mensagem digitada
+        Thread.sleep(2500);
+
+        // envia a mensagem
+        navegador.findElement(By.id("input-198")).sendKeys(Keys.ENTER);
+
     }
 }
